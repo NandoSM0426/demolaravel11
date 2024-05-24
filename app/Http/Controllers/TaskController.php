@@ -47,7 +47,9 @@ class TaskController extends Controller
     function create()
     {
 
-        return view('tasks.create');
+        return view('tasks.create', [
+            'users' => User::all()
+        ]);
     }
 
     function store(Request $request)
@@ -67,7 +69,8 @@ class TaskController extends Controller
     {
 
         return view('tasks.edit', [
-            'task' => $task
+            'task' => $task,
+            'users' => User::all()
         ]);
     }
 
@@ -75,7 +78,8 @@ class TaskController extends Controller
     {
 
         $data = $request->validate([
-            'name' => 'required'
+            'name' => 'required',
+            'user_id' => 'required'
         ]);
 
         $task->update($data);

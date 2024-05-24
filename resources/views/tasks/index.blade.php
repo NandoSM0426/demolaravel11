@@ -1,5 +1,5 @@
 <h1>Tareas</h1>
-
+<a href="/tasks/create">Crear</a>
 <form action="{{ route('tasks.index') }}">
  
     <input type="text" name="search" value="{{ $search }}">
@@ -13,5 +13,5 @@
 
 </form>
 @foreach ($tasks as $task)
-    <li><a href="{{ route('tasks.show', $task) }}">{{ $task->name }}</a> ({{ $task->user->name }})</li>
+    <li><a href="{{ $task->path() }}">{{ $task->name }}</a> ({{ $task->user->name }})</li>
 @endforeach

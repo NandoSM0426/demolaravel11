@@ -9,7 +9,7 @@ it('muestra la informacion de una tarea', function () {
     
     ]);
 
-    $response = $this->get('/tasks/'.$task->id);
+    $response = $this->get($task->path());
 
     $response->assertStatus(200);
     $response->assertSee('Tarea nueva');
@@ -44,11 +44,30 @@ it('actualizar una tarea', function () {
    ]);
    
    $data = [
-       'name' => 'Tarea actualizada'
+       'name' => 'Tarea actualizada',
+       'user_id' => $task->user_id
    ];
 
-   $response = $this->put('/tasks/'.$task->id, $data);
+   $response = $this->put($task->path(), $data);
 
    expect($task->fresh()->name)->toBe('Tarea actualizada');
 
 });
+
+it('actualizar el usuario de una tarea', function () {
+    $this->withoutExceptionHandling();
+
+    $task = Task::factory()->create([
+        'name' => 'Tarea vieja'
+    ]);
+    $otroUsuario = User::factory()->create();
+    $data = [
+        'name' => 'Tarea vieja',
+        'user_id' => $otroUsuario->id
+    ];
+ 
+    $response = $this->put($task->path(), $data);
+ 
+    expect($task->fresh()->user_id)->toBe($otroUsuario->id);
+ 
+ });

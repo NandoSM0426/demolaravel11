@@ -18,7 +18,13 @@
         @enderror
     </div>
     <div>
-
+        <label for="user_id">Usuario</label>
+        <select name="user_id" id="user_id">
+            <option value=""></option>
+            @foreach ($users as $user)
+                <option value="{{ $user->id }}">{{ $user->name }}</option>
+            @endforeach
+        </select>
     </div>
     <button type="submit">Crear tarea</button>
 </form>
