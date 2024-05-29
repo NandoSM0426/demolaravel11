@@ -12,7 +12,7 @@ it('muestra la informacion de una tarea', function () {
     $response = $this->get($task->path());
 
     $response->assertStatus(200);
-    $response->assertSee('Tarea nueva22222');
+    $response->assertSee('Tarea nueva');
 });
 
 it('crea una nueva tarea', function (){
