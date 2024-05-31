@@ -6,7 +6,6 @@ use App\Models\User;
 it('muestra la informacion de una tarea', function () {
     $task = Task::factory()->create([
         'name' => 'Tarea nueva'
-    
     ]);
 
     $response = $this->get($task->path());
@@ -15,9 +14,9 @@ it('muestra la informacion de una tarea', function () {
     $response->assertSee('Tarea nueva');
 });
 
-it('crea una nueva tarea', function (){
+it('crea una nueva tarea', function () {
     $this->withoutExceptionHandling();
-    
+
     $user = User::factory()->create();
 
     $data = [
@@ -30,28 +29,22 @@ it('crea una nueva tarea', function (){
     expect(Task::count())->toBe(1);
     expect(Task::first()->name)->toBe('Nueva tarea');
 
-    // $this->assertDatabaseHas('tasks', [
-    //     'name' => 'Nueva tarea'
-    // ]);
-
-     $response->assertRedirect('/tasks');
-
+    $response->assertRedirect('/tasks');
 });
 
 it('actualizar una tarea', function () {
-   $task = Task::factory()->create([
-       'name' => 'Tarea vieja'
-   ]);
-   
-   $data = [
-       'name' => 'Tarea actualizada',
-       'user_id' => $task->user_id
-   ];
+    $task = Task::factory()->create([
+        'name' => 'Tarea vieja'
+    ]);
 
-   $response = $this->put($task->path(), $data);
+    $data = [
+        'name' => 'Tarea actualizada',
+        'user_id' => $task->user_id
+    ];
 
-   expect($task->fresh()->name)->toBe('Tarea actualizada');
+    $response = $this->put($task->path(), $data);
 
+    expect($task->fresh()->name)->toBe('Tarea actualizada');
 });
 
 it('actualizar el usuario de una tarea', function () {
@@ -65,9 +58,22 @@ it('actualizar el usuario de una tarea', function () {
         'name' => 'Tarea vieja',
         'user_id' => $otroUsuario->id
     ];
- 
+
     $response = $this->put($task->path(), $data);
- 
+
     expect($task->fresh()->user_id)->toBe($otroUsuario->id);
- 
- });
+});
+
+it('filtra las tareas por usuario', function () {
+    $user1 = User::factory()->create();
+    $user2 = User::factory()->create();
+
+    Task::factory()->create(['user_id' => $user1->id, 'name' => 'Tarea usuario 1']);
+    Task::factory()->create(['user_id' => $user2->id, 'name' => 'Tarea usuario 2']);
+
+    $response = $this->get('/tasks?user_id=' . $user1->id);
+
+    $response->assertStatus(200);
+    $response->assertSee('Tarea usuario 1');
+    $response->assertDontSee('Tarea usuario 2');
+});
