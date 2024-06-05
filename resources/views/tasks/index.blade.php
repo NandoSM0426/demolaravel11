@@ -1,4 +1,4 @@
-<h1>Tareas</h1>
+<h1 style="color:red;">Tareas</h1>
 <a href="/tasks/create">Crear</a>
 <form action="{{ route('tasks.index') }}">
  
