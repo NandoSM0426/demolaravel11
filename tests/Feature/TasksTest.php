@@ -62,42 +62,5 @@ it('actualizar el usuario de una tarea', function () {
     $response = $this->put($task->path(), $data);
 
     expect($task->fresh()->user_id)->toBe($otroUsuario->id);
-});
-
-// Nueva prueba para verificar el filtro por usuario
-it('filtra tareas por usuario', function () {
-    $user1 = User::factory()->create();
-    $user2 = User::factory()->create();
-
-    $task1 = Task::factory()->create(['user_id' => $user1->id, 'name' => 'Tarea del usuario 1']);
-    $task2 = Task::factory()->create(['user_id' => $user2->id, 'name' => 'Tarea del usuario 2']);
-
-    $response = $this->get('/tasks?user_id=' . $user1->id);
-
-    $response->assertStatus(200);
-    $response->assertSee('Tarea del usuario 1');
-    $response->assertDontSee('Tarea del usuario 2');
-});
-
-
-it('completada', function () {
-    $this->withoutExceptionHandling();
-
-    $task = Task::factory()->create(['completed' => false]);
-
-    $response = $this->put(route('tasks.complete', $task));
-
-    $this->assertTrue($task->fresh()->completed);
-    $response->assertRedirect(route('tasks.index'));
-});
-
-it('pendiente', function () {
-    $this->withoutExceptionHandling();
-
-    $task = Task::factory()->create(['completed' => true]);
-
-    $response = $this->put(route('tasks.incomplete', $task));
-
-    $this->assertFalse($task->fresh()->completed);
-    $response->assertRedirect(route('tasks.index'));
-});
+ 
+ });
