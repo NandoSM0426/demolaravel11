@@ -8,16 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class Task extends Model
 {
     use HasFactory;
-
     protected $guarded = [];
-
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function path(){
+    public function path()
+    {
         return '/tasks/'. $this->id;
+    }
+
+    public function markAsCompleted()
+    {
+        $this->completed = true;
+        $this->save();
     }
 }
