@@ -22,7 +22,8 @@ it('crea una nueva tarea', function (){
 
     $data = [
         'name' => 'Nueva tarea',
-        'user_id' => $user->id
+        'user_id' => $user->id,
+        'priority'=>1
     ];
 
     $response = $this->post('/tasks', $data);
@@ -30,9 +31,7 @@ it('crea una nueva tarea', function (){
     expect(Task::count())->toBe(1);
     expect(Task::first()->name)->toBe('Nueva tarea');
 
-    // $this->assertDatabaseHas('tasks', [
-    //     'name' => 'Nueva tarea'
-    // ]);
+
 
      $response->assertRedirect('/tasks');
 
@@ -45,7 +44,8 @@ it('actualizar una tarea', function () {
    
    $data = [
        'name' => 'Tarea actualizada',
-       'user_id' => $task->user_id
+       'user_id' => $task->user_id,
+       'priority'=>2
    ];
 
    $response = $this->put($task->path(), $data);
@@ -63,7 +63,8 @@ it('actualizar el usuario de una tarea', function () {
     $otroUsuario = User::factory()->create();
     $data = [
         'name' => 'Tarea vieja',
-        'user_id' => $otroUsuario->id
+        'user_id' => $otroUsuario->id,
+        'priority'=>1
     ];
  
     $response = $this->put($task->path(), $data);
@@ -71,3 +72,82 @@ it('actualizar el usuario de una tarea', function () {
     expect($task->fresh()->user_id)->toBe($otroUsuario->id);
  
  });
+
+ /******Actividad 8********/
+
+ it('Verifica Filtro Por Usuario', function () {
+    $this->withoutExceptionHandling();
+
+    // Arrange
+    $user1 = User::factory()->create();
+    $user2 = User::factory()->create();
+
+    $task1 = Task::factory()->create(['user_id' => $user1->id]);
+    $task2 = Task::factory()->create(['user_id' => $user2->id]);
+    $task3 = Task::factory()->create(['user_id' => $user2->id]);
+
+    // Act
+    $response = $this->get(route('tasks.index', ['user_id' => $user1->id]));
+
+
+    // Assert
+    $response->assertStatus(200);
+
+    $response->assertViewHas('tasks', function ($tasks) use ($user1) {
+        foreach ($tasks as $task) {
+            if ($task->user_id !== $user1->id) {
+                return false;
+            }
+        }
+        return $tasks->count() === 1;
+    });
+ 
+ });
+
+ it('marca una tarea como completada', function () {
+
+    $this->withoutExceptionHandling();
+
+    
+    $user = User::factory()->create();
+    $task = Task::factory()->create([
+        'user_id' => $user->id,
+        'completed' => false,
+        'name' => 'Ver Avengers EndGame',
+    ]);
+
+    
+    $response = $this->put(route('tasks.complete', $task));
+
+
+    
+    $this->assertDatabaseHas('tasks', [
+        'id' => $task->id,
+        'completed' => true,
+    ]);
+});
+
+
+
+
+it('tareas ordenadas por prioridad de mayor a menor', function () {
+    $this->withoutExceptionHandling();
+
+  
+    $user = User::factory()->create();
+    $task1 = Task::factory()->create(['user_id' => $user->id, 'priority' => 1]);
+    $task2 = Task::factory()->create(['user_id' => $user->id, 'priority' => 3]);
+    $task3 = Task::factory()->create(['user_id' => $user->id, 'priority' => 2]);
+
+ 
+    $response = $this->get(route('tasks.index'));
+
+  
+    $response->assertStatus(200);
+
+    $response->assertSeeInOrder([
+        'Prioridad: 3', 
+        'Prioridad: 2', 
+        'Prioridad: 1'
+    ]);
+});
