@@ -42,6 +42,8 @@ class DatabaseSeeder extends Seeder
             'completed' => false,
         ]);
 
+        
+
         Schema::enableForeignKeyConstraints();
     }
 }

@@ -6,7 +6,6 @@ use App\Models\User;
 it('muestra la informacion de una tarea', function () {
     $task = Task::factory()->create([
         'name' => 'Tarea nueva'
-    
     ]);
 
     $response = $this->get($task->path());
@@ -15,9 +14,9 @@ it('muestra la informacion de una tarea', function () {
     $response->assertSee('Tarea nueva');
 });
 
-it('crea una nueva tarea', function (){
+it('crea una nueva tarea', function () {
     $this->withoutExceptionHandling();
-    
+
     $user = User::factory()->create();
 
     $data = [
@@ -31,10 +30,11 @@ it('crea una nueva tarea', function (){
     expect(Task::count())->toBe(1);
     expect(Task::first()->name)->toBe('Nueva tarea');
 
+    // $this->assertDatabaseHas('tasks', [
+    //     'name' => 'Nueva tarea'
+    // ]);
 
-
-     $response->assertRedirect('/tasks');
-
+    $response->assertRedirect('/tasks');
 });
 
 it('actualizar una tarea', function () {
@@ -44,14 +44,12 @@ it('actualizar una tarea', function () {
    
    $data = [
        'name' => 'Tarea actualizada',
-       'user_id' => $task->user_id,
-       'priority'=>2
+       'user_id' => $task->user_id
    ];
 
-   $response = $this->put($task->path(), $data);
+    $response = $this->put($task->path(), $data);
 
-   expect($task->fresh()->name)->toBe('Tarea actualizada');
-
+    expect($task->fresh()->name)->toBe('Tarea actualizada');
 });
 
 it('actualizar el usuario de una tarea', function () {
@@ -66,9 +64,9 @@ it('actualizar el usuario de una tarea', function () {
         'user_id' => $otroUsuario->id,
         'priority'=>1
     ];
- 
+
     $response = $this->put($task->path(), $data);
- 
+
     expect($task->fresh()->user_id)->toBe($otroUsuario->id);
  
  });
