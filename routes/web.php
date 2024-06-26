@@ -15,8 +15,4 @@ Route::get('/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.e
 Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
 Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 Route::put('/tasks/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
-
 Route::put('/tasks/{task}/incomplete', [TaskController::class, 'incomplete'])->name('tasks.incomplete');
-
-Route::put('/tasks/{task}/incomplete', [TaskController::class, 'incomplete'])->name('tasks.incomplete');
-

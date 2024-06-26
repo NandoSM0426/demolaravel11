@@ -6,6 +6,7 @@ use App\Models\User;
 it('muestra la informacion de una tarea', function () {
     $task = Task::factory()->create([
         'name' => 'Tarea nueva'
+    
     ]);
 
     $response = $this->get($task->path());
@@ -14,9 +15,9 @@ it('muestra la informacion de una tarea', function () {
     $response->assertSee('Tarea nueva');
 });
 
-it('crea una nueva tarea', function () {
+it('crea una nueva tarea', function (){
     $this->withoutExceptionHandling();
-
+    
     $user = User::factory()->create();
 
     $data = [
@@ -34,7 +35,8 @@ it('crea una nueva tarea', function () {
     //     'name' => 'Nueva tarea'
     // ]);
 
-    $response->assertRedirect('/tasks');
+     $response->assertRedirect('/tasks');
+
 });
 
 it('actualizar una tarea', function () {
@@ -44,12 +46,14 @@ it('actualizar una tarea', function () {
    
    $data = [
        'name' => 'Tarea actualizada',
-       'user_id' => $task->user_id
+       'user_id' => $task->user_id,
+       'priority'=>2
    ];
 
-    $response = $this->put($task->path(), $data);
+   $response = $this->put($task->path(), $data);
 
-    expect($task->fresh()->name)->toBe('Tarea actualizada');
+   expect($task->fresh()->name)->toBe('Tarea actualizada');
+
 });
 
 it('actualizar el usuario de una tarea', function () {
@@ -64,9 +68,9 @@ it('actualizar el usuario de una tarea', function () {
         'user_id' => $otroUsuario->id,
         'priority'=>1
     ];
-
+ 
     $response = $this->put($task->path(), $data);
-
+ 
     expect($task->fresh()->user_id)->toBe($otroUsuario->id);
  
  });
@@ -102,11 +106,13 @@ it('actualizar el usuario de una tarea', function () {
  
  });
 
+ /******Actividad 9*********/
+
  it('marca una tarea como completada', function () {
 
     $this->withoutExceptionHandling();
 
-    
+    // Arrange
     $user = User::factory()->create();
     $task = Task::factory()->create([
         'user_id' => $user->id,
@@ -114,33 +120,33 @@ it('actualizar el usuario de una tarea', function () {
         'name' => 'Ver Avengers EndGame',
     ]);
 
-    
+    // Act
     $response = $this->put(route('tasks.complete', $task));
 
 
-    
+    // Assert
     $this->assertDatabaseHas('tasks', [
         'id' => $task->id,
         'completed' => true,
     ]);
 });
 
-
+/***Prioridades***/
 
 
 it('tareas ordenadas por prioridad de mayor a menor', function () {
     $this->withoutExceptionHandling();
 
-  
+    // Arrange
     $user = User::factory()->create();
     $task1 = Task::factory()->create(['user_id' => $user->id, 'priority' => 1]);
     $task2 = Task::factory()->create(['user_id' => $user->id, 'priority' => 3]);
     $task3 = Task::factory()->create(['user_id' => $user->id, 'priority' => 2]);
 
- 
+    // Act
     $response = $this->get(route('tasks.index'));
 
-  
+    // Assert
     $response->assertStatus(200);
 
     $response->assertSeeInOrder([
