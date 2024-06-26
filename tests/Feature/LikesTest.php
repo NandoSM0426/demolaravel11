@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Models\Post;
 
 it('a user can like a post', function () {
     $user = User::factory()->create();
